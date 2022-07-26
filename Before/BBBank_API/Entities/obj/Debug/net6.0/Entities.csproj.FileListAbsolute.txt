@@ -1,0 +1,12 @@
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Entities\bin\Debug\net6.0\Entities.deps.json
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Entities\bin\Debug\net6.0\Entities.dll
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Entities\bin\Debug\net6.0\Entities.pdb
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Entities\obj\Debug\net6.0\Entities.csproj.AssemblyReference.cache
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Entities\obj\Debug\net6.0\Entities.GeneratedMSBuildEditorConfig.editorconfig
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Entities\obj\Debug\net6.0\Entities.AssemblyInfoInputs.cache
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Entities\obj\Debug\net6.0\Entities.AssemblyInfo.cs
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Entities\obj\Debug\net6.0\Entities.csproj.CoreCompileInputs.cache
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Entities\obj\Debug\net6.0\Entities.dll
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Entities\obj\Debug\net6.0\refint\Entities.dll
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Entities\obj\Debug\net6.0\Entities.pdb
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Entities\obj\Debug\net6.0\ref\Entities.dll

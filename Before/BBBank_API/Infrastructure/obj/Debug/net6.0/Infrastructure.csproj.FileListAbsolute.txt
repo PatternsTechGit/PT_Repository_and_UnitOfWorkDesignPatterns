@@ -1,0 +1,17 @@
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\bin\Debug\net6.0\Infrastructure.deps.json
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\bin\Debug\net6.0\Infrastructure.runtimeconfig.json
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\bin\Debug\net6.0\Infrastructure.dll
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\bin\Debug\net6.0\Infrastructure.pdb
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\bin\Debug\net6.0\Entities.dll
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\bin\Debug\net6.0\Entities.pdb
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\obj\Debug\net6.0\Infrastructure.csproj.AssemblyReference.cache
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\obj\Debug\net6.0\Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\obj\Debug\net6.0\Infrastructure.AssemblyInfoInputs.cache
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\obj\Debug\net6.0\Infrastructure.AssemblyInfo.cs
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\obj\Debug\net6.0\Infrastructure.csproj.CoreCompileInputs.cache
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\obj\Debug\net6.0\Infrastructure.csproj.CopyComplete
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\obj\Debug\net6.0\Infrastructure.dll
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\obj\Debug\net6.0\refint\Infrastructure.dll
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\obj\Debug\net6.0\Infrastructure.pdb
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\obj\Debug\net6.0\Infrastructure.genruntimeconfig.cache
+D:\PT\ServerSideValidationWithAutoMapper\original\BBBank_API\Infrastructure\obj\Debug\net6.0\ref\Infrastructure.dll
