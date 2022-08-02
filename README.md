@@ -24,7 +24,7 @@ In this lab we will be working on the **Backend Code base** only
 
 ## **Backend Code Base**
 ### **Previously** 
-We developed a base structure of an API solution in Asp.net core that have just two controllers which are `TransactionController` and `AccountController`. We created a DTO for account request and added server-side validations with **data annotations** on the properties. We also used **AutoMapper** for to bind entities with the DTO.
+We developed a base structure of an API solution in asp.net core that have just two controllers which are `TransactionController` and `AccountController`. We created a DTO for account request and added server-side validations with **data annotations** on the properties. We also used **AutoMapper** for to bind entities with the DTO.
 
 * `TransactionController` have api functions `GetLast12MonthBalances` and `GetLast12MonthBalances/{userId}` which returns data for the last 12 months total balances.
 * `AccountController` have api function `OpenAccount(Account account)` which is used to create an account for the user
@@ -76,28 +76,78 @@ _____________
 * **Add Repositories and UOW as a Service in Web Builder**
 
 
-## **Step 1: Setup Repository Contract**
+## Step 1: User and Account model changes
+
+We will make some **user** model properties *nullable* so that if these are not provided from frontend then we should not be getting errors thrown by database so user model would be looks like this. Consider the **question mark (?)** in front of properties that needs to be nullable . 
+
+```cs
+    public class User : BaseEntity // Inheriting from Base Entity class
+    {
+        // First name
+        public string? FirstName { get; set; }
+
+        // Last name
+        public string? LastName { get; set; }
+
+        // Email of the user
+        public string Email { get; set; }
+
+        // Profile picture or avatar
+        public string? ProfilePicUrl { get; set; }
+
+        // Account attached to the user
+        // disbaling default asp.net validation since it is a navigation property 
+        [ValidateNever]
+        public virtual Account Account { get; set; }
+    }
+
+```
+
+In **Account** class we will decorate the `AccountStatus` with `[JsonConverter(typeof(JsonStringEnumConverter))]` so that it can map frontend values to account status enum.
+
+```cs
+        // This decoration is required to conver integer coming in from UI to respective Enum
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        //Account's status
+        public AccountStatus AccountStatus { get; set; }
+
+```
+
+## Step 2 Data Migration
+After changes in `User` & `Account` model, now you need to execute data migration commands so that schema changes can be reflected in database as well but before data migration commands you have to follow [data seeding](https://github.com/PatternsTechGit/PT_AzureSql_EFDataSeeding) lab so that you have database setup to execute migration .
+
+### Step 2.1 Migration Commands Execution
+Now open package manage console and select infrastructure project and run the command `Add-Migration` which creates a new migration class as per specified name
+```
+Add-Migration repositoryAndUnitOfWorkPattern
+```
+Then run the `update-Database` which executes the last migration file created by the Add-Migration command and applies changes to the database schema.
+```
+Update-Database
+```
+
+## Step 3: Setup Repository Contract
 Create a new folder ***Contacts*** in the ***Infrastructure*** project of the solution. **Create an interface IRepository of type TEntity** where TEntity represents the BaseEntity class. In this interface we have defined the signatures of the common functionalities like CRUD and search etc which are shown in the code below.    
 
 ```cs
- public interface IRepository<TEntity> where TEntity : BaseEntity
-    {
-        Task AddAsync(TEntity t);
-        Task<TEntity[]> BatchAddAsync(TEntity[] entities);
-        Task<int> CountAsync();
-        void DeleteAsync(TEntity t);
-        Task<List<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> match, string[] includes = null);
-        Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> match);
-        Task<List<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes);
-        Task<TEntity> GetAsync(string id, string include = null);
-        Task<TEntity> GetAsync(string id, string[] includes = null);
-        Task<TEntity> GetAsync(string id);
-        Task<TEntity> UpdateAsync(TEntity updated);
-        Task<bool> Exists(Expression<Func<TEntity, bool>> match);
-    }
+public interface IRepository<TEntity> where TEntity : BaseEntity
+{
+    Task AddAsync(TEntity t);
+    Task<TEntity[]> BatchAddAsync(TEntity[] entities);
+    Task<int> CountAsync();
+    void DeleteAsync(TEntity t);
+    Task<List<TEntity>> FindAllAsync(Expression<Func<TEntity, bool>> match, string[] includes = null);
+    Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> match);
+    Task<List<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes);
+    Task<TEntity> GetAsync(string id, string include = null);
+    Task<TEntity> GetAsync(string id, string[] includes = null);
+    Task<TEntity> GetAsync(string id);
+    Task<TEntity> UpdateAsync(TEntity updated);
+    Task<bool> Exists(Expression<Func<TEntity, bool>> match);
+}
 ```
 
-## **Step 2: Implement Repository Class**
+## Step 4: Implement Repository Class
 Create a new class **SQLRepository of type TEntity**, where TEntity represents the BaseEntity class, in the ***Infrastructure*** project. The **SQLRepository inherits from the IRepository interface**. The SQLRepository **provides the implementations** of the signatures defined in the repository contract. We have used the DBSet in the SQLRepository. A **DbSet represents the collection of all entities in the context**, or that can be queried from the database, of a given type. **DbSet objects are created from a DbContext** using the DbContext. The implementations are shown in the code below
 
 ```cs
@@ -226,27 +276,27 @@ Create a new class **SQLRepository of type TEntity**, where TEntity represents t
     }
 ```
 
-## **Step 3: Setup Unit of Work Contract**
+## Step 5: Setup Unit of Work Contract
 Create an interface ***IUnitOfWork*** in the ***Contract folder of the Infrastructure*** project. The contract will define the repository contracts of the entities and a method signature for committing changes to the database. The code is shown below 
 
 ```cs
     public interface IUnitOfWork
     {
-        IRepository<Account> AccountRepository { get; }
+        IAccountRepository AccountRepository { get; }
         IRepository<Transaction> TransactionRepository { get; }
         IRepository<User> UserRepository { get; }
         Task<int> CommitAsync();
     }
 ```
 
-## **Step 4: Implement Unit of Work**
+## Step 6: Implement Unit of Work
 Create a new class ***UnitOfWork*** in the ***Infrastructure project*** which is inherited from the UOW contract IUnitOfWork. We will **DI the repositories to create its instances and also the DbContext for the CommitAsync method**. The **CommitAsync method will simply commit all the changes at once** for all the operation performed in the repositories mentioned in the UnitOfWork class. The code for UOW is given below
 
 
 ```cs
     public class UnitOfWork : IUnitOfWork
     {
-        //DIining DbContext here will give it an instance of BBBankContext
+        //DI DbContext here will give it an instance of BBBankContext
         protected readonly DbContext _context;
         //UOW also acting as a wrapper on all the repositories .
         // So that all the repositories can be accessed from UOW in services layer
@@ -271,7 +321,7 @@ Create a new class ***UnitOfWork*** in the ***Infrastructure project*** which is
     }
 ```
 
-## **Step 5: Setup Specialized Account Repository Contract**
+## Step 7: Setup Specialized Account Repository Contract
 The specialized repository is a kind of unique repository which has all the common methods of the IRepository and also the methods that has a very specific functions for it. Create a new Class  ***IAccountRepository*** in the ***Contract folder of the Infrastructure*** project. It is inherited from the IRepository of account type. IAccountRepository class contains the prototypes for all the methods in the IRepository plus its own methods. We have defined **GetAllAccountsPaginated** as a specific method in this example which will return the paginated account list as a response. The code is given below
 
 ```cs
@@ -280,30 +330,32 @@ The specialized repository is a kind of unique repository which has all the comm
         Task<ICollection<Account>> GetAllAccountsPaginated(int pageIndex, int pageSize);
     }
 ```
-## **Step 6: Implement Specialized Account Repository**
+## Step 8: Implement Specialized Account Repository
   Create a new class  ***AccountRepository*** in the ***Infrastructure*** project. It will contain the implementation of specialized repository pattern that is inherited from SQLRepository and also it will have everything in SQLRepository plus some special cases of data logics. We have used DbContext as a DI for its context. 
 ```cs
-    public class AccountRepository : SQLRepository<Account>, IAccountRepository
+// Implementation of specialized repository pattern that is inherited from SQLRepository
+// will have everything in SQLRepository plus some special cases of Datalogic 
+public class AccountRepository : SQLRepository<Account>, IAccountRepository
+{
+    private DbContext _context;
+    public AccountRepository(DbContext context)
+        : base(context)
     {
-        private DbContext _context;
-        public AccountRepository(DbContext context)
-            : base(context)
-        {
-            this._context = context;
-        }
-
-        public async Task<ICollection<Account>> GetAllAccountsPaginated(int pageIndex, int pageSize)
-        {
-            return await this.DbSet.Include(x => x.User)
-                // first n number of records will be skpped based on pageSize and pageIndex
-                // for example for pageIndex 2 of pageSize is 10 first 10 records will be skipped.
-                .Skip((pageIndex) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-        }
+        this._context = context;
     }
+
+    public async Task<ICollection<Account>> GetAllAccountsPaginated(int pageIndex, int pageSize)
+    {
+        return await this.DbSet.Include(x => x.User)
+            // first n number of records will be skpped based on pageSize and pageIndex
+            // for example for pageIndex 2 of pageSize is 10 first 10 records will be skipped.
+            .Skip((pageIndex) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
+}
 ```
-## **Step 7: Change Account Service w.r.t the Account Repository and Unit of Work**
+## Step 9: Change Account Service w.r.t the Account Repository and Unit of Work
 Now we will change account service with respect to the account repository and Unit of Work design pattern by injecting the IUnitOfWork class. Now, we will use its instance for the repositories and any method we need. The code is given below.
 
 ```cs
@@ -347,8 +399,8 @@ Now we will change account service with respect to the account repository and Un
         }
     }
 ```
-## **Step 7: Add Repositories and UOW as a Service in Web Builder**
-We will add the UOW and repositories in the `Program.cs` file web application builder as a service. AddScoped will keep one instance of the type per http session. We have DI of the contracts with their implementations in a service. Add the given lines in a file 
+## Step 10: Add Repositories and UOW as a Service in Web Builder
+We will add the UOW and repositories in the `Program.cs` file web application builder as a service. **AddScoped** will keep *one instance of the type per http session*. We have DI of the contracts with their implementations in a service. Add the given lines in a file 
 ```cs
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
