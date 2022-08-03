@@ -1,6 +1,7 @@
 using AutoMapper;
 using BBBankAPI;
 using Infrastructure;
+using Infrastructure.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Services;
@@ -54,10 +55,19 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+
+//Setting up DI of generic repos for UOW
+builder.Services.AddScoped(typeof(IRepository<>), typeof(SQLRepository<>));
+
+
 ///...Dependency Injection settings
 builder.Services.AddScoped<ITransactionService, TransactionService>();
-builder.Services.AddScoped<IAccountsService, AccountService>();
+//builder.Services.AddScoped<IAccountsService, AccountService>();
 builder.Services.AddScoped<DbContext, BBBankContext>();
+
+
 
 //Adding EF DBContext in the application services using the connectionString fetched above.
 //UseLazyLoadingProxies : Lazy loading means that the related data is transparently loaded from the database when the navigation property is accessed.
